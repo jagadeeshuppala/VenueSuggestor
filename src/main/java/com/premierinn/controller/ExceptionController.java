@@ -4,6 +4,7 @@ import com.premierinn.model.FoursquareResponse;
 import com.premierinn.model.Meta;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
@@ -36,6 +37,15 @@ public class ExceptionController {
 
         return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = { MissingServletRequestParameterException.class})
+    public ResponseEntity<FoursquareResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException runtimeException){
+        Meta meta = new Meta(400, null, " "+runtimeException.getMessage()+ "; visit Premierinn help page for troubleshooting");
+        FoursquareResponse response = new FoursquareResponse(meta,null);
+
+        return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(value = {Throwable.class})
     public ResponseEntity<FoursquareResponse> handleThrowable(Throwable throwable){
